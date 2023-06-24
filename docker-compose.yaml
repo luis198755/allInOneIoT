@@ -1,0 +1,118 @@
+version: "3.9"
+services:
+  mocksensor:
+    build: mocksensor
+    container_name: Mocksensor
+    restart: always
+    volumes:
+      - ./data/mocksensor:/tmp/
+
+  emqx:
+    user: root
+    image: emqx/emqx:5.0.10
+    container_name: EMQX
+    restart: always
+    ports:
+      - "18083:18083" 
+      - "1883:1883"
+      - "8083:8083"
+    volumes:
+      - data:/opt/emqx/data
+      - etc:/opt/emqx/etc
+      - log:/opt/emqx/log
+
+  influxdb:
+    image: influxdb:2.6.0
+    container_name: InfluxDB
+    depends_on:
+      - mocksensor
+    restart: always
+    ports: 
+      - "8086:8086"
+    volumes:
+      - datain:/var/lib/influxdb2
+      - configin:/etc/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=luis
+      - DOCKER_INFLUXDB_INIT_PASSWORD=passluis
+      - DOCKER_INFLUXDB_INIT_ORG=tlmx
+      - DOCKER_INFLUXDB_INIT_BUCKET=iotdata
+      - DOCKER_INFLUXDB_INIT_RETENTION=1w
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=luis-iotdata-auth-token
+
+  telegrafCPU:
+    image: telegraf:1.24
+    container_name: TelegrafCPU
+    depends_on:
+      - influxdb
+    restart: always
+    hostname: localhost
+    volumes:
+      - ./data/telegrafCPU/telegraf.conf:/etc/telegraf/telegraf.conf 
+
+  telegrafinput:
+    image: telegraf:1.24
+    container_name: TelegrafInput
+    depends_on:
+      - mocksensor
+    restart: always
+    volumes:
+      - ./data/telegrafinput/telegraf.conf:/etc/telegraf/telegraf.conf
+      - ./data/mocksensor:/tmp/mocksensor
+
+  telegrafoutput:
+    image: telegraf:1.24
+    container_name: TelegrafOutput
+    depends_on:
+      - emqx
+    restart: always
+    volumes:
+      - ./data/telegrafoutput/telegraf.conf:/etc/telegraf/telegraf.conf
+
+  nodered:
+    image: nodered/node-red:latest
+    container_name: nodered
+    user: root
+    restart: always
+    ports:
+      - "1880:1880"
+    volumes:
+      - datanode:/data
+     # - ./data/nodered/data:/data
+    environment:
+      - TZ=America/Mexico_City
+
+  grafana:
+    user: root
+    image: grafana/grafana:9.2.4
+    container_name: Grafana
+    depends_on:
+      - influxdb
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/admin_password
+    volumes:
+      - grafana:/var/lib/grafana
+     # - ./data/grafana:/var/lib/grafana
+    secrets:
+      - source: grafana_admin_password
+        target: /run/secrets/admin_password
+
+  
+
+secrets:
+  grafana_admin_password:
+    file: ./secrets/grafana_admin_password
+
+volumes:
+  mocksensor:
+  data: 
+  etc:
+  log:
+  datain:
+  grafana:
+  configin:
+  datanode:
