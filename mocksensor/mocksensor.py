@@ -28,5 +28,8 @@ def main():
             output_file.write(f'{json.dumps(sensor_data)}\n')
         time.sleep(10)
 
+        with open('/tmp/ouput_mock_sensor.json', 'w') as output_file:
+            output_file.write('')
+
 if __name__ == '__main__':
     main()
