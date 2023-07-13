@@ -6,7 +6,8 @@ services:
     restart: always
     volumes:
       - ./data/mocksensor:/tmp/
-  goSensor:
+
+  gosensor:
     build: goSensor
     container_name: GoSensor
     restart: always
