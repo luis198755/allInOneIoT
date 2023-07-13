@@ -6,6 +6,12 @@ services:
     restart: always
     volumes:
       - ./data/mocksensor:/tmp/
+  goSensor:
+    build: goSensor
+    container_name: GoSensor
+    restart: always
+    volumes:
+      - ./data/goSensor:/tmp/
 
   emqx:
     user: root
