@@ -49,9 +49,9 @@ func main() {
 
 		file.Close()
 
-		fmt.Printf("ID: %d\n", i)
+		/*fmt.Printf("ID: %d\n", i)
 		fmt.Printf("TimeSTamp: %v\n", timeStamp)
-		fmt.Printf("Temperature: %.2f\n", temperature)
+		fmt.Printf("Temperature: %.2f\n", temperature)*/
 
 		time.Sleep(1 * time.Second) // Delay for 1 second before generating the next temperature value
 	}
