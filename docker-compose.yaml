@@ -13,6 +13,11 @@ services:
     restart: always
     volumes:
       - ./data/goSensor:/tmp/
+    
+  gocliinflux:
+    build: goCliInflux
+    container_name: GoCliInflux
+    restart: always
 
   emqx:
     user: root
