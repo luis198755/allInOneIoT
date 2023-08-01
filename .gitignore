@@ -1,3 +1,4 @@
-**/ouput_mock_sensor.json
-**/.vscode
-**/xxx
+goSensor/
+mocksensor/
+*.vscode
+
