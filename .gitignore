@@ -1,4 +1,4 @@
-goSensor/
-mocksensor/
+data/goSensor/
+data/mocksensor/
 *.vscode
 
