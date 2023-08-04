@@ -19,7 +19,7 @@ services:
     container_name: mockSensorGo
     restart: always
     volumes:
-      - ./data/goSensor:/tmp/
+      - ./data/mocksensor:/tmp/
     
   gocliinflux:
     build: goCliInflux
