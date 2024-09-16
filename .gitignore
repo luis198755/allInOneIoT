@@ -1,4 +1,5 @@
 data/goSensor/
 data/mocksensor/
+data/ECG_Sensor/
 *.vscode
 
