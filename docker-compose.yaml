@@ -13,6 +13,13 @@ services:
     volumes:
       - ./data/goSensor:/tmp/
 
+  ecg_go:
+    build: ecg_go
+    container_name: ECG_Sensor
+    restart: always
+    volumes:
+      - ./data/ECG_Sensor:/tmp/
+
   mocksensorgo:
     build: mockSensorGo
     container_name: mockSensorGo
