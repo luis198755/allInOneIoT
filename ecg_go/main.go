@@ -9,12 +9,14 @@ import (
 )
 
 type ECGData struct {
-	Timestamp string  `json:"timestamp"`
-	SensorID  int     `json:"sensorID"`
-	ECG       float64 `json:"ECG"`
+	DeviceID   string  `json:"device_id"`
+	ClientID   string  `json:"client_id"`
+	SensorType string  `json:"sensor_type"`
+	ECG        float64 `json:"ecg"`
+	Timestamp  float64 `json:"timestamp"`
 }
 
-// SimularECG simula una señal de ECG y la imprime en la terminal
+// SimularECG simula una señal de ECG y la guarda en un archivo JSON
 func SimularECG() {
 	const frecuenciaMuestreo = 250.0 // Hz
 	const duracion = 10.0            // segundos
@@ -23,7 +25,6 @@ func SimularECG() {
 	for i := 0; i < totalMuestras; i++ {
 		t := float64(i) / frecuenciaMuestreo
 		valorECG := señalECG(t)
-		fmt.Printf("Tiempo: %.3f s, ECG: %.3f mV\n", t, valorECG)
 		escribirJSON(valorECG)
 		time.Sleep(time.Second / time.Duration(frecuenciaMuestreo))
 	}
@@ -45,9 +46,11 @@ func señalECG(t float64) float64 {
 
 func escribirJSON(valorECG float64) {
 	data := ECGData{
-		Timestamp: time.Now().UTC().Format(time.RFC3339Nano),
-		SensorID:  721,
-		ECG:       valorECG,
+		DeviceID:   "e2e78336",
+		ClientID:   "c03d5158",
+		SensorType: "ECG",
+		ECG:        valorECG,
+		Timestamp:  float64(time.Now().UnixNano()) / 1e9,
 	}
 
 	jsonData, err := json.Marshal(data)
@@ -56,7 +59,7 @@ func escribirJSON(valorECG float64) {
 		return
 	}
 
-	file, err := os.Create("/tmp/ecg_data.json")
+	file, err := os.Create("/tmp/ouput_mock_ecgsensorGo.json")
 	if err != nil {
 		fmt.Println("Error al crear el archivo:", err)
 		return
@@ -70,5 +73,7 @@ func escribirJSON(valorECG float64) {
 }
 
 func main() {
-	SimularECG()
+	for {
+		SimularECG()
+	}
 }
